@@ -219,6 +219,9 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
                         WindowManager.closeWindow(id: id)
                     }
                 }
+                .onDisappear {
+                    WindowManager.closeWindow(id: id)
+                }
         }
 #else
             ZStack {
