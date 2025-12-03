@@ -143,7 +143,6 @@ public struct Popup<PopupContent: View>: ViewModifier {
 
     // MARK: - Drag to dismiss with scroll
 #if os(iOS)
-    /// UIScrollView delegate, needed for calling didEndDragging
     @StateObject private var scrollViewDelegate = PopupScrollViewDelegate()
 #endif
 
@@ -329,16 +328,16 @@ public struct Popup<PopupContent: View>: ViewModifier {
 
         let referenceY = sheetContentRect.height / 3
         scrollViewDelegate.scrollEnded = { value in
-            if -value >= referenceY {
-                dismissCallback(.drag)
+            if dragToDismiss && -value >= referenceY {
+                DispatchQueue.main.async {
+                    dismissCallback(.drag)
+                }
             } else {
                 withAnimation {
                     scrollViewOffset = .zero
                 }
             }
         }
-
-        scrollView.delegate = scrollViewDelegate
     }
 
 #endif
@@ -521,25 +520,32 @@ public struct Popup<PopupContent: View>: ViewModifier {
 #error("This project requires Swift 5.9 or newer. Please update your Xcode to compile this project.")
 #endif
 
+    @ViewBuilder
     func sheetWithDragGesture() -> some View {
 #if !os(tvOS)
-        let drag = DragGesture()
-            .updating($dragState) { drag, state, _ in
-                if !isDragging {
-                    DispatchQueue.main.async {
-                        isDragging = true
+        switch type {
+        case .scroll:
+            sheet() // Drag to dismiss is handled inside
+        default:
+            let dragGesture = DragGesture()
+                .updating($dragState) { drag, state, _ in
+                    if !isDragging {
+                        DispatchQueue.main.async {
+                            isDragging = true
+                        }
                     }
+                    state = .dragging(translation: drag.translation)
                 }
-                state = .dragging(translation: drag.translation)
-            }
-            .onEnded(onDragEnded)
+                .onEnded(onDragEnded)
+            
+            sheet()
+                .applyIf(dragToDismiss) {
+                    $0
+                        .offset(dragOffset())
+                        .simultaneousGesture(dragGesture)
+                }
+        }
 
-        return sheet()
-            .applyIf(dragToDismiss) {
-                $0
-                    .offset(dragOffset())
-                    .simultaneousGesture(drag)
-            }
 #else
         return sheet()
 #endif

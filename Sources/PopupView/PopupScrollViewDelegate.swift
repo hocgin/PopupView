@@ -17,7 +17,8 @@ extension UIScrollView {
     }
 }
 
-final class PopupScrollViewDelegate: NSObject, ObservableObject, UIScrollViewDelegate {
+@MainActor
+final class PopupScrollViewDelegate: ObservableObject {
 
     var scrollView: UIScrollView?
 
@@ -49,7 +50,7 @@ final class PopupScrollViewDelegate: NSObject, ObservableObject, UIScrollViewDel
         guard let gestures = scrollView?.gestureRecognizers else { return }
         
         if !gestureIsCreated {
-            let panGesture = gestures[1] as? UIPanGestureRecognizer
+            let panGesture = gestures.compactMap({ $0 as? UIPanGestureRecognizer }).first
             panGesture?.addTarget(self, action: #selector(handlePan))
             scrollView?.bounces = false
             gestureIsCreated = true
