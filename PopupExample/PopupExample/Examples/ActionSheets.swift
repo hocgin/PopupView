@@ -103,6 +103,7 @@ struct ActionSheetSecond: View {
                 .font(.system(size: 14))
                 .opacity(0.6)
         }
+        .foregroundStyle(.black)
         .padding(.horizontal, 24)
         .padding(.vertical, 16)
         .background(.white)

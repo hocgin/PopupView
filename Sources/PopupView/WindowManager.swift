@@ -12,7 +12,7 @@ import SwiftUI
 @MainActor
 public final class WindowManager {
     static let shared = WindowManager()
-    var windows: [UUID: UIWindow] = [:]
+    private var windows: [UUID: UIWindow] = [:]
 
     // Show a new window with hosted SwiftUI content
     public static func showInNewWindow<Content: View>(id: UUID, allowTapThroughBG: Bool, dismissClosure: @escaping ()->(), content: @escaping () -> Content) {
