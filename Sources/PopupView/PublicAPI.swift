@@ -13,6 +13,7 @@ public enum DismissSource {
     case tapOutside
     case drag
     case autohide
+    case exitCommand // TV Remove/ESC on Mac
 }
 
 extension Popup {

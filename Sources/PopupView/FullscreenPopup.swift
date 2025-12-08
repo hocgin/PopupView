@@ -224,10 +224,17 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
                 }
         }
 #else
-            ZStack {
-                content
-                constructPopup()
-            }
+        ZStack {
+            content
+                .disabled(showContent)
+
+            constructPopup()
+        }
+        .onExitCommand {
+            dismissSource = .exitCommand
+            isPresented = false
+            item = nil
+        }
 #endif
     }
     
