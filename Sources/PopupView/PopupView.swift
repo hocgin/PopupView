@@ -545,9 +545,8 @@ public struct Popup<PopupContent: View>: ViewModifier {
                         .simultaneousGesture(dragGesture)
                 }
         }
-
 #else
-        return sheet()
+        sheet()
 #endif
     }
 

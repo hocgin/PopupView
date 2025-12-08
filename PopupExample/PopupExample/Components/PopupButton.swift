@@ -21,7 +21,11 @@ struct PopupButton<Content> : View where Content : View {
         } label: {
             content()
         }
+#if os(tvOS)
+        .buttonStyle(.automatic)
+#else
         .customButtonStyle(foreground: .black, background: .clear)
+#endif
     }
 }
 
@@ -41,7 +45,11 @@ struct ItemPopupButton<Content> : View where Content : View {
         } label: {
             content()
         }
+#if os(tvOS)
+        .buttonStyle(.automatic)
+#else
         .customButtonStyle(foreground: .black, background: .clear)
+#endif
     }
 }
 
