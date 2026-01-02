@@ -176,6 +176,18 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
                         if let newValue {
                             /// copying `itemView`
                             self.tempItemView = itemView(newValue)
+                            if displayMode == .window {
+                                WindowManager.showInNewWindow(
+                                        id: id,
+                                        allowTapThroughBG: allowTapThroughBG,
+                                        dismissClosure: {
+                                            dismissSource = .binding
+                                            isPresented = false
+                                            item = nil
+                                        },
+                                        content: {tempItemView}
+                                    )
+                            }
                         }
                         appearAction(popupPresented: newValue != nil)
                     }
