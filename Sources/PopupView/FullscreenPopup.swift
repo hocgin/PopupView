@@ -185,7 +185,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
                                             isPresented = false
                                             item = nil
                                         },
-                                        content: {tempItemView}
+                                        content: {constructPopup()}
                                     )
                             }
                         }
