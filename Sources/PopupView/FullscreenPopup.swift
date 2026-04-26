@@ -176,6 +176,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
                         if let newValue {
                             /// copying `itemView`
                             self.tempItemView = itemView(newValue)
+#if os(iOS)
                             if displayMode == .window {
                                 WindowManager.showInNewWindow(
                                         id: id,
@@ -188,6 +189,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
                                         content: {constructPopup()}
                                     )
                             }
+#endif
                         }
                         appearAction(popupPresented: newValue != nil)
 
