@@ -522,7 +522,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
 
     @ViewBuilder
     func sheetWithDragGesture() -> some View {
-#if !os(tvOS)
+#if os(iOS)
         switch type {
         case .scroll:
             sheet() // Drag to dismiss is handled inside
