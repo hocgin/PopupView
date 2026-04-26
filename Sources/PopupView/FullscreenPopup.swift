@@ -190,6 +190,18 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
                             }
                         }
                         appearAction(popupPresented: newValue != nil)
+
+                        #if os(iOS)
+                        if displayMode == .window, showSheet, newValue != nil {
+                            WindowManager.updateRootView(id: id, dismissClosure: {
+                                dismissSource = .binding
+                                isPresented = false
+                                item = nil
+                            }) {
+                                constructPopup()
+                            }
+                        }
+                        #endif
                     }
                 }
                 .onAppear {
@@ -220,13 +232,17 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
             content
                 .onChange(of: showSheet) { newValue in
                     if newValue {
-                        WindowManager.showInNewWindow(id: id, allowTapThroughBG: allowTapThroughBG, dismissClosure: {
-                            dismissSource = .binding
-                            isPresented = false
-                            item = nil
-                        }) {
-                            constructPopup()
-                        }
+                        WindowManager.showInNewWindow(
+                            id: id,
+                            closeOnTapOutside: closeOnTapOutside,
+                            allowTapThroughBG: allowTapThroughBG,
+                            dismissClosure: {
+                                dismissSource = .binding
+                                isPresented = false
+                                item = nil
+                            }) {
+                                constructPopup()
+                            }
                     } else {
                         WindowManager.closeWindow(id: id)
                     }
@@ -235,7 +251,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
                     WindowManager.closeWindow(id: id)
                 }
         }
-#else
+#elseif os(macOS) || os(tvOS)
         ZStack {
             content
                 .disabled(showContent)
@@ -246,6 +262,13 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
             dismissSource = .exitCommand
             isPresented = false
             item = nil
+        }
+#else
+        ZStack {
+            content
+                .disabled(showContent)
+
+            constructPopup()
         }
 #endif
     }
