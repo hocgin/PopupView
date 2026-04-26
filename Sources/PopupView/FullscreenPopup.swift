@@ -180,6 +180,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
                             if displayMode == .window {
                                 WindowManager.showInNewWindow(
                                         id: id,
+                                        closeOnTapOutside: false,
                                         allowTapThroughBG: allowTapThroughBG,
                                         dismissClosure: {
                                             dismissSource = .binding
