@@ -14,7 +14,7 @@ let package = Package(
         .library(name: "PopupView", targets: ["PopupView"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/siteline/swiftui-introspect", "1.3.0"..<"27.0.0"),
+        .package(url: "https://github.com/siteline/swiftui-introspect", .upToNextMajor(from: "26.0.0")),
     ],
     targets: [
         .target(
