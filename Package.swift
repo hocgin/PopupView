@@ -13,15 +13,11 @@ let package = Package(
     products: [
         .library(name: "PopupView", targets: ["PopupView"]),
     ],
-    dependencies: [
-        .package(url: "https://github.com/siteline/swiftui-introspect", .upToNextMajor(from: "26.0.0")),
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "PopupView",
-            dependencies: [
-                .product(name: "SwiftUIIntrospect", package: "swiftui-introspect"),
-            ],
+            dependencies: [],
             swiftSettings: [
               .enableExperimentalFeature("StrictConcurrency")
             ]

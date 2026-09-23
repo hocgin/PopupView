@@ -73,7 +73,7 @@ private struct ActivityView: View {
 
 struct ActionSheetFirst: View {
     var body: some View {
-        ActionSheetView(bgColor: .white) {
+        ActionSheetView(topPadding: 600, bgColor: .white) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     ActivityView(emoji: "🤼‍♂️", name: "Sparring", isSelected: true)

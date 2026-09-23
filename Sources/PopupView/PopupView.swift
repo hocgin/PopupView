@@ -7,9 +7,6 @@
 //
 
 import SwiftUI
-#if os(iOS)
-@_spi(Advanced) import SwiftUIIntrospect
-#endif
 
 public struct Popup<PopupContent: View>: ViewModifier {
 
@@ -388,13 +385,15 @@ public struct Popup<PopupContent: View>: ViewModifier {
                     .fixedSize(horizontal: false, vertical: true)
                 ScrollView {
                     view()
+                        .background(
+                            ScrollViewResolver { scrollView in
+                                configure(scrollView: scrollView)
+                            }
+                        )
                 }
                 // no heigher than its contents
                 .frame(maxHeight: scrollViewContentHeight)
                 .frameGetter($scrollViewRect)
-            }
-            .introspect(.scrollView, on: .iOS(.v15...)) { scrollView in
-                configure(scrollView: scrollView)
             }
             .offset(CGSize(width: 0, height: scrollViewOffset.height))
 
