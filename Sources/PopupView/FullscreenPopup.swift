@@ -356,7 +356,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
     }
 
     func onAnimationCompleted() {
-        if shouldShowContent { // return if this was called on showing animation, only proceed if called on hiding
+        if popupPresented || shouldShowContent { // layout may still be pending when the showing timer fires
             eventsSemaphore.signal()
             return
         }

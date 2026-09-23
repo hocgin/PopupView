@@ -11,21 +11,34 @@ import SwiftUI
 struct ScrollViewResolver: UIViewRepresentable {
     var onResolve: (UIScrollView) -> Void
 
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        DispatchQueue.main.async {
-            if let scrollView = view.enclosingScrollView() {
-                onResolve(scrollView)
-            }
-        }
-        return view
+    func makeUIView(context: Context) -> ResolverView {
+        ResolverView()
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {}
+    func updateUIView(_ uiView: ResolverView, context: Context) {
+        uiView.onResolve = onResolve
+        uiView.resolveIfNeeded()
+    }
 }
 
-private extension UIView {
-    func enclosingScrollView() -> UIScrollView? {
+final class ResolverView: UIView {
+    var onResolve: ((UIScrollView) -> Void)?
+    private weak var resolvedScrollView: UIScrollView?
+
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        resolveIfNeeded()
+    }
+
+    func resolveIfNeeded() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self, let scrollView = enclosingScrollView(), scrollView !== resolvedScrollView else { return }
+            resolvedScrollView = scrollView
+            onResolve?(scrollView)
+        }
+    }
+
+    private func enclosingScrollView() -> UIScrollView? {
         var view = superview
         while let currentView = view {
             if let scrollView = currentView as? UIScrollView {

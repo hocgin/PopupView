@@ -146,8 +146,8 @@ public struct Popup<PopupContent: View>: ViewModifier {
     /// Position when the scroll content offset became less than 0
     @State private var scrollViewOffset: CGSize = .zero
 
-    /// Height of scrollView content that will be displayed on the screen
-    @State private var scrollViewContentHeight = 0.0
+    /// Measure content independently of the UIScrollView's first layout pass.
+    @State private var scrollViewContentHeight: CGFloat = 0
 
     /// Track ScrollView's frame to check if it's ready
     @State private var scrollViewRect: CGRect = .zero
@@ -315,10 +315,6 @@ public struct Popup<PopupContent: View>: ViewModifier {
         scrollViewDelegate.scrollView = scrollView
         scrollViewDelegate.addGestureIfNeeded()
 
-        DispatchQueue.main.async {
-            scrollViewContentHeight = scrollView.contentSize.height
-        }
-
         scrollViewDelegate.didReachTop = { value in
             scrollViewOffset = CGSize(width: 0, height: -value)
         }
@@ -390,8 +386,19 @@ public struct Popup<PopupContent: View>: ViewModifier {
                                 configure(scrollView: scrollView)
                             }
                         )
+                        .background(
+                            GeometryReader { geometry in
+                                Color.clear
+                                    .onAppear {
+                                        scrollViewContentHeight = geometry.size.height
+                                    }
+                                    .onChange(of: geometry.size.height) { height in
+                                        scrollViewContentHeight = height
+                                    }
+                            }
+                        )
                 }
-                // no heigher than its contents
+                // No higher than its contents.
                 .frame(maxHeight: scrollViewContentHeight)
                 .frameGetter($scrollViewRect)
             }
